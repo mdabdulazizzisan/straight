@@ -117,9 +117,11 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Special thanks to the open-source community
 
 ## Author
-
-[Your Name]
-
+```
+[Md Abdul Aziz Zisan,
+Fahim Faisal Talha,
+Nafiul Islam]
+```
 ## Support
 
 For bug reports and feature requests, please use the GitHub issue tracker. 
