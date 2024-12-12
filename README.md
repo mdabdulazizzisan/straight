@@ -35,7 +35,7 @@ A cross-distribution package installer for Linux, inspired by Ninite for Windows
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/straight.git
+git clone https://github.com/mdabdulazizzisan/straight.git
 cd straight
 ```
 
