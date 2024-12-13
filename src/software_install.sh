@@ -77,9 +77,10 @@ install_software() {
     
     echo "Processing installation request for $software..."
     
-    # Check if software is supported
+    # Check if software is supported using binary search
     if ! is_software_supported "$normalized_name"; then
         echo "Error: $software is not supported"
+        suggest_similar_software "$normalized_name"
         return 1
     fi
     
@@ -130,23 +131,158 @@ install_software() {
     esac
 }
 
-# Function to check if software is supported
+# Function to check if software is supported using binary search
 is_software_supported() {
     local normalized_name=$1
-    # Check if package map variable exists
-    if [ -n "$(declare -p "PACKAGE_MAP_${normalized_name}" 2>/dev/null)" ]; then
+    if binary_search_software "$normalized_name"; then
         return 0
     fi
     return 1
 }
 
-# Function to list all supported software
+# Function to list all supported software with bubble sort
 list_supported_software() {
     echo "Supported Software:"
     echo "=================="
-    # This will be populated from package_names.sh
+    
+    # Create an array to store software names
+    local software_names=()
+    
+    # Collect all software names
     for var in $(compgen -A variable | grep ^PACKAGE_MAP_); do
-        local software_name=${var#PACKAGE_MAP_}
-        echo "- $software_name"
+        local name=${var#PACKAGE_MAP_}
+        software_names+=("$name")
     done
-} 
+    
+    # Bubble Sort implementation
+    local n=${#software_names[@]}
+    for ((i = 0; i < n - 1; i++)); do
+        for ((j = 0; j < n - i - 1; j++)); do
+            # Compare adjacent elements
+            if [[ "${software_names[j]}" > "${software_names[j+1]}" ]]; then
+                # Swap them if they are in wrong order
+                local temp=${software_names[j]}
+                software_names[j]=${software_names[j+1]}
+                software_names[j+1]=$temp
+            fi
+        done
+    done
+    
+    # Print sorted software names
+    for name in "${software_names[@]}"; do
+        echo "- $name"
+    done
+}
+
+# Binary Search implementation for software support check
+binary_search_software() {
+    local search_name=$1
+    local software_names=()
+    
+    # Collect and sort software names
+    for var in $(compgen -A variable | grep ^PACKAGE_MAP_); do
+        local name=${var#PACKAGE_MAP_}
+        software_names+=("$name")
+    done
+    
+    # Sort the array (required for binary search)
+    IFS=$'\n' sorted_names=($(sort <<<"${software_names[*]}"))
+    unset IFS
+    
+    # Binary Search
+    local left=0
+    local right=$((${#sorted_names[@]} - 1))
+    
+    while [ $left -le $right ]; do
+        local mid=$(( (left + right) / 2 ))
+        
+        if [ "${sorted_names[mid]}" = "$search_name" ]; then
+            return 0  # Found
+        elif [[ "${sorted_names[mid]}" < "$search_name" ]]; then
+            left=$((mid + 1))
+        else
+            right=$((mid - 1))
+        fi
+    done
+    
+    return 1  # Not found
+}
+
+# Levenshtein Distance implementation for finding similar software names
+calculate_levenshtein_distance() {
+    local str1=$1
+    local str2=$2
+    local len1=${#str1}
+    local len2=${#str2}
+    
+    # Create a matrix of zeros
+    declare -A matrix
+    for ((i = 0; i <= len1; i++)); do
+        matrix[$i,0]=$i
+    done
+    for ((j = 0; j <= len2; j++)); do
+        matrix[0,$j]=$j
+    done
+    
+    # Fill the matrix
+    for ((i = 1; i <= len1; i++)); do
+        for ((j = 1; j <= len2; j++)); do
+            if [ "${str1:i-1:1}" = "${str2:j-1:1}" ]; then
+                matrix[$i,$j]=${matrix[$((i-1)),$((j-1))]}
+            else
+                local deletion=$((${matrix[$((i-1)),$j]} + 1))
+                local insertion=$((${matrix[$i,$((j-1))]} + 1))
+                local substitution=$((${matrix[$((i-1)),$((j-1))]} + 1))
+                
+                # Find minimum of the three operations
+                matrix[$i,$j]=$deletion
+                [ $insertion -lt ${matrix[$i,$j]} ] && matrix[$i,$j]=$insertion
+                [ $substitution -lt ${matrix[$i,$j]} ] && matrix[$i,$j]=$substitution
+            fi
+        done
+    done
+    
+    # Return the bottom-right cell of the matrix
+    echo ${matrix[$len1,$len2]}
+}
+
+# Function to suggest similar software names when a typo is made
+suggest_similar_software() {
+    local input_name=$1
+    local suggestions=()
+    local max_suggestions=3
+    local max_distance=3
+    
+    # Get all software names
+    local software_names=()
+    for var in $(compgen -A variable | grep ^PACKAGE_MAP_); do
+        local name=${var#PACKAGE_MAP_}
+        software_names+=("$name")
+    done
+    
+    # Calculate distances and store valid suggestions
+    declare -A distances
+    for name in "${software_names[@]}"; do
+        local distance=$(calculate_levenshtein_distance "$input_name" "$name")
+        if [ $distance -le $max_distance ]; then
+            distances[$name]=$distance
+        fi
+    done
+    
+    # Sort suggestions by distance
+    IFS=$'\n' sorted_suggestions=($(
+        for name in "${!distances[@]}"; do
+            echo "${distances[$name]}:$name"
+        done | sort -n | head -n $max_suggestions | cut -d':' -f2
+    ))
+    unset IFS
+    
+    # Return suggestions if any found
+    if [ ${#sorted_suggestions[@]} -gt 0 ]; then
+        echo "Did you mean one of these?"
+        for suggestion in "${sorted_suggestions[@]}"; do
+            echo "  - $suggestion"
+        done
+    fi
+}
+  
