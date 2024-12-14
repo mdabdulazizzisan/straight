@@ -70,6 +70,11 @@ sudo ./straight.sh firefox vlc gimp libreoffice
 ```
 ![5 -ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/bfe86f42-0011-4725-bcbd-370419c4062a)
 
+## Additional Features
+### Suggestions
+Suggests a corrected name if there is a potential typing mistake.
+![4 -ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/e2475f35-c2df-4bd0-8395-895271d927f2)
+
 
 ## Supported Software
 
