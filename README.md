@@ -32,6 +32,7 @@ A cross-distribution package installer for Linux, inspired by Ninite for Windows
 - And more...
 
 ## Installation
+![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/a680979b-c440-4b95-a45a-c5dc83a21b7c)
 
 1. Clone the repository:
 ```bash
