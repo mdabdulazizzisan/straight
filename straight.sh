@@ -48,7 +48,7 @@ print_help() {
     echo "  - flatpak"
     echo "  - snap"
     echo ""
-    echo "For more information, visit: https://github.com/yourusername/straight"
+    echo "For more information, visit: https://github.com/mdabdulazizzisan/straight"
 }
 
 # Main execution starts here
