@@ -68,6 +68,8 @@ Example:
 ```bash
 sudo ./straight.sh firefox vlc gimp libreoffice
 ```
+![5 -ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/bfe86f42-0011-4725-bcbd-370419c4062a)
+
 
 ## Supported Software
 
