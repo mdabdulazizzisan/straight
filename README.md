@@ -53,6 +53,11 @@ Show help:
 ```
 ![2 -ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/a41e70a8-7dc9-4530-aaf4-040f756df251)
 
+List available software:
+```bash
+./straight.sh --list
+```
+![3 -ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/ba41f0a8-0a61-4ad6-b684-b5a41afac055)
 
 Basic usage:
 ```bash
@@ -63,13 +68,6 @@ Example:
 ```bash
 sudo ./straight.sh firefox vlc gimp libreoffice
 ```
-
-List available software:
-```bash
-./straight.sh --list
-```
-
-
 
 ## Supported Software
 
