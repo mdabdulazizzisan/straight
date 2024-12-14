@@ -47,6 +47,13 @@ chmod +x straight.sh
 
 ## Usage
 
+Show help:
+```bash
+./straight.sh --help
+```
+![2 -ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/a41e70a8-7dc9-4530-aaf4-040f756df251)
+
+
 Basic usage:
 ```bash
 sudo ./straight.sh [software_names...]
@@ -62,10 +69,7 @@ List available software:
 ./straight.sh --list
 ```
 
-Show help:
-```bash
-./straight.sh --help
-```
+
 
 ## Supported Software
 
